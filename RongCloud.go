@@ -40,7 +40,7 @@ type Response struct {
     code int `json:"code"`
 }
 
-func newRongCloud(appKey, appSecret string) *RongCloud  {
+func NewRongCloud(appKey, appSecret string) *RongCloud  {
     return &RongCloud{
         appKey: appKey,
         appSecret: appSecret,

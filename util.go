@@ -7,4 +7,4 @@ func checkEmpty(field, fieldName string)  {
 		errors.New(fieldName + " is required")
 	}
 }
-var  rmap map[string]interface{}
+
