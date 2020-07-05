@@ -1,6 +1,9 @@
 package mysdk
 
-import "encoding/json"
+import (
+	"encoding/json"
+	"errors"
+)
 
 type RegisterResponse struct {
 	Code    int     `json:"code"`
@@ -9,8 +12,14 @@ type RegisterResponse struct {
 }
 
 func (rc *RongCloud) Register(userId, name, portraitURI string) (*RegisterResponse, error)  {
-	checkEmpty(userId,"userId")
-	checkEmpty(name, "name")
+	if userId ==""  {
+		return nil, errors.New("userId is required")
+	}
+
+	if name ==""  {
+		return nil, errors.New("name is required")
+	}
+
 	rc.url =  "/user/getToken.json"
 	rc.data = map[string]interface{}{
 		"userId": userId,

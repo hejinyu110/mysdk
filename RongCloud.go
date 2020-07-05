@@ -4,6 +4,7 @@ import (
     "crypto/sha1"
     "encoding/hex"
     "errors"
+    "fmt"
     "io/ioutil"
     "math/rand"
     "net/http"
@@ -58,9 +59,9 @@ func (rc *RongCloud) setHeader() {
 
     rc.request.Header.Set("Timestamp", timestamp)
     rc.request.Header.Set("Nonce", nonce)
-    rc.request.Header.Set("appKey", rc.appKey)
-    rc.request.Header.Set("Sinaature", signature)
-    rc.request.Header.Set("UserAgent", UA)
+    rc.request.Header.Set("App-Key", rc.appKey)
+    rc.request.Header.Set("Signature", signature)
+    rc.request.Header.Set("User-Agent", UA)
 }
 func (rc *RongCloud)setParams() string{
     var params []string
@@ -93,7 +94,7 @@ func (rc *RongCloud) post() ([]byte, error)  {
     if err != nil {
         return nil, err
     }
-    req.Header.Set("Content-Type", "application/json")
+    req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
     rc.request = req
     body, err := rc.doPost()
     return body, err

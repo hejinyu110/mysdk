@@ -1,10 +1,13 @@
 package mysdk
 
-import "errors"
+import (
+	"errors"
+)
 
-func checkEmpty(field, fieldName string)  {
+func checkEmpty(field, fieldName string) error {
 	if field == "" {
-		errors.New(fieldName + " is required")
+		return errors.New(fieldName + " is required")
 	}
+	return nil
 }
 
