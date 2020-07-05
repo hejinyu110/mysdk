@@ -3,6 +3,7 @@ package mysdk
 import (
 	"encoding/json"
 	"errors"
+	"math"
 )
 
 type RegisterResponse struct {
@@ -175,7 +176,7 @@ func (rc RongCloud) RemoveWhiteList(userId string, whiteUserId ... string) (*Res
 	}
 	return resp, nil
 }
-
+//用户白名单
 func (rc RongCloud) GetWhiteList(userId string) (*UsersResponse, error)  {
 	if userId == "" {
 		return nil, errors.New("userId is required")
@@ -194,3 +195,69 @@ func (rc RongCloud) GetWhiteList(userId string) (*UsersResponse, error)  {
 	}
 	return resp, nil
 }
+
+//禁用
+func (rc RongCloud) AddBlock(minute int, userId ... string) (*Response, error) {
+	if minute ==0 || minute > 43200 {
+		return nil, errors.New("minute in 1 - 43200")
+	}
+	if len(userId) ==0 || len(userId) > 20 {
+		return nil, errors.New("user id length in 1 - 20")
+	}
+	rc.url = "/user/block.json"
+	rc.data = map[string]interface{}{
+		"userId":userId,
+		"minute": minute,
+	}
+	bytes, err := rc.post()
+	if err != nil {
+		return nil, err
+	}
+	resp := new(Response)
+	if err := json.Unmarshal(bytes, &resp); err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+func (rc RongCloud) RemoveBlock(userId ... string) (*Response, error)  {
+	if len(userId) ==0 || len(userId) > 20 {
+		return nil, errors.New("userId len in 1 - 20 ")
+	}
+	rc.url = "/user/unblock.json"
+	rc.data = map[string]interface{}{
+		"userId":userId,
+	}
+	bytes, err := rc.post()
+	if err != nil {
+		return nil, err
+	}
+	resp := new(Response)
+	if err := json.Unmarshal(bytes, &resp); err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+type BlockListResponse struct {
+	Code int `json:"code"`
+	Users []struct{
+		UserId string `json:"userId"`
+		BlockEndTime string `json:"blockEndTime"`
+	}
+}
+func (rc RongCloud) BlockList(page int, size int) (*BlockListResponse, error)  {
+	rc.url = "/user/block/query.json"
+	rc.data = map[string]interface{}{
+		"page":page,
+		"size":size,
+	}
+	bytes, err := rc.post()
+	if err != nil {
+		return nil, err
+	}
+	resp := new(BlockListResponse)
+	if err := json.Unmarshal(bytes, &resp); err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+//标签
