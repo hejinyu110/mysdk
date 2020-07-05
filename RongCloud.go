@@ -3,8 +3,8 @@ package mysdk
 import (
     "crypto/sha1"
     "encoding/hex"
+    "encoding/json"
     "errors"
-    "fmt"
     "io/ioutil"
     "math/rand"
     "net/http"
@@ -95,6 +95,21 @@ func (rc *RongCloud) post() ([]byte, error)  {
         return nil, err
     }
     req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+    rc.request = req
+    body, err := rc.doPost()
+    return body, err
+}
+func (rc RongCloud) postJson() ([]byte, error)  {
+    params, err := json.Marshal(rc.data)
+    if err != nil {
+        return nil, err
+    }
+    url := rc.host + rc.url
+    req, err := http.NewRequest("POST", url, strings.NewReader(params))
+    if err != nil {
+        return nil, err
+    }
+    req.Header.Set("Content-Type", "application/json")
     rc.request = req
     body, err := rc.doPost()
     return body, err
