@@ -242,7 +242,7 @@ type BlockListResponse struct {
 	Users []struct{
 		UserId string `json:"userId"`
 		BlockEndTime string `json:"blockEndTime"`
-	}
+	} `json:"users"`
 }
 func (rc RongCloud) BlockList(page int, size int) (*BlockListResponse, error)  {
 	rc.url = "/user/block/query.json"
@@ -261,3 +261,71 @@ func (rc RongCloud) BlockList(page int, size int) (*BlockListResponse, error)  {
 	return resp, nil
 }
 //标签
+func (rc RongCloud) TagSet(userId string, tags ... string) (*Response, error) {
+	if userId == "" {
+		return nil, errors.New("userId is required")
+	}
+	if len(tags) ==0 || len(tags) >20 {
+		return nil, errors.New("tags length in 1 - 20")
+	}
+	rc.url = "/user/tag/set.json"
+	rc.data = map[string]interface{}{
+		"userId": userId,
+		"tags": tags,
+	}
+	bytes, err := rc.postJson()
+	if err != nil {
+		return nil, err
+	}
+	resp := new(Response)
+	if err := json.Unmarshal(bytes, &resp); err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+func (rc RongCloud) TagBatchSet(userId, tags []string) (*Response, error)  {
+	if len(userId) ==0 || len(userId) >20 {
+		return nil, errors.New("userId length in 1 - 20 ")
+	}
+	if len(tags) ==0 || len(tags) >20 {
+		return nil, errors.New("tags length in 1 - 20")
+	}
+	rc.url = "/user/tag/batch/set.json"
+	rc.data = map[string]interface{}{
+		"userIds": userId,
+		"tags": tags,
+	}
+	bytes, err := rc.postJson()
+	if err != nil {
+		return nil, err
+	}
+	resp := new(Response)
+	if err := json.Unmarshal(bytes, &resp); err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+type TagGetResponse struct {
+	Code int `json:"code"`
+	Result map[string][]string `json:"result"`
+}
+
+func (rc RongCloud) TagGet(userId string) (*TagGetResponse, error)  {
+	if userId == "" {
+		return nil, errors.New("userId is required ")
+	}
+	rc.url = "/user/tag/get.json"
+	rc.data = map[string]interface{}{
+		"userId": userId,
+	}
+	bytes, err := rc.postJson()
+	if err != nil {
+		return nil, err
+	}
+	resp := new(TagGetResponse)
+	if err := json.Unmarshal(bytes, &resp); err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
