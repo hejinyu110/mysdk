@@ -1,11 +1,13 @@
 package mysdk
 
 import (
+    "bytes"
     "crypto/sha1"
     "encoding/hex"
     "encoding/json"
     "errors"
     "io/ioutil"
+    "log"
     "math/rand"
     "net/http"
     "strconv"
@@ -38,7 +40,7 @@ type header struct {
 }
 
 type Response struct {
-    code int `json:"code"`
+    Code int `json:"code"`
 }
 
 func NewRongCloud(appKey, appSecret string) *RongCloud  {
@@ -96,6 +98,7 @@ func (rc *RongCloud) post() ([]byte, error)  {
     }
     req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
     rc.request = req
+    log.Println(req)
     body, err := rc.doPost()
     return body, err
 }
@@ -105,7 +108,7 @@ func (rc RongCloud) postJson() ([]byte, error)  {
         return nil, err
     }
     url := rc.host + rc.url
-    req, err := http.NewRequest("POST", url, strings.NewReader(params))
+    req, err := http.NewRequest("POST", url, bytes.NewReader(params))
     if err != nil {
         return nil, err
     }
@@ -118,6 +121,7 @@ func (rc *RongCloud) doPost() ([]byte, error) {
     rc.setHeader()
     client := &http.Client{}
     resp, err := client.Do(rc.request)
+    log.Println(rc.request)
     if err != nil {
         return nil, err
     }
