@@ -3,7 +3,6 @@ package mysdk
 import (
 	"encoding/json"
 	"errors"
-	"math"
 )
 
 type RegisterResponse struct {
@@ -101,7 +100,7 @@ func (rc RongCloud)GetBlackList(userId string) (*UsersResponse, error) {
 	if err != nil {
 		return nil, err
 	}
-	resp := new(BlackListResponse)
+	resp := new(UsersResponse)
 	if err := json.Unmarshal(bytes, &resp); err != nil {
 		return nil, err
 	}
