@@ -98,7 +98,6 @@ func (rc *RongCloud) post() ([]byte, error)  {
     }
     req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
     rc.request = req
-    log.Println(req)
     body, err := rc.doPost()
     return body, err
 }
